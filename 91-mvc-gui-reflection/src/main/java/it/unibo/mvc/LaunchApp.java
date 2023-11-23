@@ -3,7 +3,9 @@ package it.unibo.mvc;
 import it.unibo.mvc.api.DrawNumberController;
 import it.unibo.mvc.controller.DrawNumberControllerImpl;
 import it.unibo.mvc.model.DrawNumberImpl;
+import it.unibo.mvc.view.DrawNumberStdView;
 import it.unibo.mvc.view.DrawNumberSwingView;
+import java.lang.reflect.*;
 
 /**
  * Application entry-point.
@@ -26,6 +28,41 @@ public final class LaunchApp {
     public static void main(final String... args) {
         final var model = new DrawNumberImpl();
         final DrawNumberController app = new DrawNumberControllerImpl(model);
-        app.addView(new DrawNumberSwingView());
+        
+        final Class<DrawNumberStdView> std = DrawNumberStdView.class;
+        final Class<DrawNumberSwingView> swing = DrawNumberSwingView.class;
+        Constructor<DrawNumberStdView> stdConstructor = null;
+        Constructor<DrawNumberSwingView> swingConstructor = null;
+        try {
+            stdConstructor = std.getConstructor();
+        } catch (NoSuchMethodException e) {
+            System.out.println(e.getMessage());
+        }
+        try {
+            swingConstructor = swing.getConstructor();
+        } catch (NoSuchMethodException e) {
+            System.out.println(e.getMessage());
+        }
+        
+        for (int i = 0; i < 3; i++) {
+            try {
+                app.addView(stdConstructor.newInstance());
+            } catch (InvocationTargetException e) {
+                System.out.println(e.getMessage());
+            } catch (InstantiationException e) {
+                System.out.println(e.getMessage());
+            } catch (IllegalAccessException e) {
+                System.out.println(e.getMessage());
+            }
+            try {
+                app.addView(swingConstructor.newInstance());
+            } catch (InvocationTargetException e) {
+                System.out.println(e.getMessage());
+            } catch (InstantiationException e) {
+                System.out.println(e.getMessage());
+            } catch (IllegalAccessException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 }
